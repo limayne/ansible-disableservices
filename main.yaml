@@ -1,0 +1,72 @@
+---
+- hosts: all # 指定服务器组
+  become: yes  # 要求主控root运行
+
+  tasks:
+  - name: Disable unnecessary services
+    # 禁用不必要服务，根据需求修改
+    systemd:
+      name: "{{ item }}"
+      state: stopped
+      enabled: no
+    with_items:
+    - bluetooth
+    - cups-browsed
+    - modemmanager
+    - avahi-daemon
+    - avahi-dnsconfd
+    - printer
+    - cpuspeed
+    - atd
+    - anacron
+    - alsasound
+    - apmd
+    - arptables_jf
+    - arpwatch
+    - capi
+    - chargen
+    - chargen-udp
+    - chargen-dgram
+    - chargen-stream
+    - conman
+    - cups
+    - cupsd
+    - cups-config-daemon
+    - cups-lpd
+    - cvs
+    - dc_client
+    - dc_server
+    - dhcdbd
+    - dnsmasq
+    - diskdump
+    - netdump
+    - mcstrans
+    - mdmonitor
+    - mdmpd
+    - restorecond
+    - dund
+    - pand
+    - hcid
+    - sdpd
+    ignore_errors: true # 忽略没有的服务
+
+  - name: Stop and disable iptables
+    # 停止和禁用 iptables 服务
+    service:
+      name: iptables
+      state: stopped
+      enabled: no
+    ignore_errors: true # 忽略没有的服务
+
+  - name: Disable SELinux
+    # 禁用 SELinux
+    lineinfile:
+      path: /etc/selinux/config
+      regexp: 'SELINUX='
+      line: 'SELINUX=disabled'
+    ignore_errors: true # 忽略没有的服务
+
+  - name: Reboot systemd
+    # 重启systemd生效
+    systemd:
+      daemon_reexec: true
