@@ -65,6 +65,14 @@
       regexp: 'SELINUX='
       line: 'SELINUX=disabled'
     ignore_errors: true # 忽略没有的服务
+    
+  - name: Disable swappiness
+    # 禁用 Swappiness
+    sysctl:
+      name: vm.swappiness
+      value: 0
+      state: present
+      sysctl_set: yes
 
   - name: Reboot systemd
     # 重启systemd生效
